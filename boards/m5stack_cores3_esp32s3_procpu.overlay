@@ -1,0 +1,16 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+
+/ {
+	aliases {
+		sensor-i2c = &i2c0;
+		accel0 = &bmi270;
+	};
+};
+
+&i2c0 {
+	status = "okay";
+	bmi270: bmi270@69 {
+		compatible = "bosch,bmi270";
+		reg = <0x69>;
+	};
+};
