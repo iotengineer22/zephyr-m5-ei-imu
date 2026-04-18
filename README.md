@@ -10,14 +10,23 @@ Motion data acquired from the accelerometer is processed in real-time, and infer
 
 ## Features
 
-*   **Multi-threading with Zephyr RTOS**: The application utilizes Zephyr's robust thread management to cleanly separate tasks and maintain strict timing:
+*   **Multi-threading with Zephyr RTOS**:
+    The application utilizes Zephyr's robust thread management to cleanly separate tasks and maintain strict timing:
+
     *   **Sensor Thread (Priority 5, High)**: Ensures reliable 100Hz (10ms) data sampling from the BMI270 accelerometer without dropping any frames.
     *   **GUI Thread (Priority 6, Medium)**: Handles asynchronous UI updates on the display.
     *   **Inference Thread (Priority 7, Low)**: Executes the computationally heavy Edge Impulse classification model in the background.
-*   **Continuous Inference & Double Buffering**: Implements a sliding window approach (e.g., a 2000ms window sliding every 1000ms) alongside double buffering.
-*   This allows the AI to output predictions every second smoothly, while the sensor continues to fill the primary buffer without being blocked by the inference process.
-*   **Interactive GUI (LVGL)**: Uses the **LVGL** (Light and Versatile Graphics Library) supported by Zephyr to show real-time inference results on the M5Stack CoreS3's LCD screen.
-*    It dynamically changes expressive ASCII emoticons based on the recognized gestures:
+
+*   **Continuous Inference & Double Buffering**:
+    Implements a sliding window approach (e.g., a 2000ms window sliding every 1000ms) alongside double buffering.
+    
+    This allows the AI to output predictions every second smoothly, while the sensor continues to fill the primary buffer without being blocked by the inference process.
+
+*   **Interactive GUI (LVGL)**:
+    Uses the **LVGL** (Light and Versatile Graphics Library) supported by Zephyr to show real-time inference results on the M5Stack CoreS3's LCD screen.
+    
+    It dynamically changes expressive ASCII emoticons based on the recognized gestures:
+
     *   **Idle**: `( -_- ) zzz`
     *   **Flick**: `( >_< )`
     *   **Updown**: `( @o@ )`
@@ -51,6 +60,15 @@ You need to create and download your own Edge Impulse model for this project.
     *   M5Stack CoreS3 (ESP32-S3)
 *   **Sensor**:
     *   Bosch BMI270 (Internal 6-axis IMU)
+
+## Build and Flash
+
+To build and flash the application for the M5Stack CoreS3, run the following commands:
+
+```bash
+west build -p -b m5stack_cores3/esp32s3/procpu
+west flash
+```
 
 ## License
 
