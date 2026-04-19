@@ -32,6 +32,39 @@ Motion data acquired from the accelerometer is processed in real-time, and infer
     *   **Updown**: `( @o@ )`
     *   **Knock**: `( O_O )!`
 
+## Architecture
+
+The following timeline illustrates the Zephyr RTOS multi-threaded concurrent processing and double-buffering mechanism.
+
+```text
+[ Timeline: RTOS Multi-threaded Concurrent Processing ]
+
+Time(ms)  | 0    10   20  ... 1000  1010  1020 ... 1500                 ... 2000
+----------|-------------------------------------------------------------------------
+1. Sensor | #    #    #   ...  #(*)  #    #   ...   #                    ... #(*)
+(Pri: 5)  | |    |    |        |     |    |         |                      |
+ Buffers  |[features_buffer]   |   [ features_buffer (next frame)     ]    |
+          |                    +-> [ inference_buffer copy & notify ]      +->
+----------|-------------------------------------------------------------------------
+2. GUI    |   @    @    @ ...    @    @    @ ...    @ <*Text Updated*> ... @
+(Pri: 6)  |   \--(10ms draw)     |                  |                      |
+----------|-------------------------------------------------------------------------
+3. Infer. | (--- waiting ---)  =  =  =  =  =  ... = (waiting)              =  =
+(Pri: 7)  |                    ^                    |                      ^
+          |                    \--(read buffer)     \--(Mutex safe update)
+```
+
+**Legend:**
+*   `#` : Sensor Sampling (100Hz)
+*   `@` : LVGL GUI Task Handler (100Hz)
+*   `=` : AI Inference Processing (Edge Impulse)
+*   `(*)` : Buffer is full. Trigger inference (Semaphore Give)
+
+**Why Zephyr RTOS? (Key Benefits):**
+1.  **Preemption (Zero Dropped Samples):** Even when heavy AI inference (`=`) is running, the highest priority Sensor thread (`#`) preempts it every 10ms to safely collect data.
+2.  **Event-Driven Sync:** The Inference thread sleeps completely until the Sensor thread signals via a Semaphore `(*)`, saving CPU cycles.
+3.  **Thread Safety:** The AI cleanly updates the GUI text using a Mutex to prevent race conditions with the rapidly drawing GUI thread.
+
 ## Edge Impulse Model
 
 You need to create and download your own Edge Impulse model for this project.
