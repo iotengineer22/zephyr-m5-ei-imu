@@ -6,7 +6,13 @@ This repository is a project that executes EdgeAI inference based on acceleromet
 
 Motion data acquired from the accelerometer is processed in real-time, and inference is performed by an AI model on the edge device.
 
-**Demo Video:** [https://youtu.be/h2TyvIFuZGY](https://youtu.be/h2TyvIFuZGY)
+**Demo Videos:**
+*   [https://youtu.be/h2TyvIFuZGY](https://youtu.be/h2TyvIFuZGY)
+*   [https://youtu.be/ayb-T4G0Hwg](https://youtu.be/ayb-T4G0Hwg)
+*   [https://youtu.be/FfQ9aSa1g3A](https://youtu.be/FfQ9aSa1g3A)
+*   [https://youtu.be/vk44Q4eOBug](https://youtu.be/vk44Q4eOBug)
+
+*Note: A demo program with a modified display is included in the `demo` folder.*
 
 ## Features
 
@@ -25,12 +31,12 @@ Motion data acquired from the accelerometer is processed in real-time, and infer
 *   **Interactive GUI (LVGL)**:
     Uses the **LVGL** (Light and Versatile Graphics Library) supported by Zephyr to show real-time inference results on the M5Stack CoreS3's LCD screen.
     
-    It dynamically changes expressive ASCII emoticons based on the recognized gestures:
+    It dynamically changes its Stackchan-like facial expressions (drawn with LVGL shapes) based on the recognized gestures:
 
-    *   **Idle**: `( -_- ) zzz`
-    *   **Flick**: `( >_< )`
-    *   **Updown**: `( @o@ )`
-    *   **Knock**: `( O_O )!`
+    *   **Idle**: Sleepy eyes closed (horizontal lines).
+    *   **Flick**: Squinting eyes with a wide shouting mouth.
+    *   **Updown**: Eyes popping out vertically like a cartoon.
+    *   **Knock**: Super surprised! Massive bug eyes with the jaw dropped to the floor.
 
 ## Architecture
 
@@ -49,7 +55,7 @@ Time(ms)  | 0    10   20  ... 1000  1010  1020 ... 1500                 ... 2000
 2. GUI    |   @    @    @ ...    @    @    @ ...    @ <*Text Updated*> ... @
 (Pri: 6)  |   \--(10ms draw)     |                  |                      |
 ----------|-------------------------------------------------------------------------
-3. Infer. | (--- waiting ---)  =  =  =  =  =  ... = (waiting)              =  =
+3.Edge AI | (--- waiting ---)  = ==   ==   ==   (--- waiting ---)              =
 (Pri: 7)  |                    ^                    |                      ^
           |                    \--(read buffer)     \--(Mutex safe update)
 ```
@@ -82,6 +88,7 @@ You need to create and download your own Edge Impulse model for this project.
 ├── prj.conf                # Zephyr project configuration
 ├── src/
 │   └── main.cpp            # Main application source code (Threads, LVGL, etc.)
+├── demo/                   # Demo program with modified display/GUI
 ├── edge-impulse-sdk/       # (Requires Download) Edge Impulse C++ SDK
 ├── model-parameters/       # (Requires Download) Model parameters
 └── tflite-model/           # (Requires Download) TensorFlow Lite Micro model
